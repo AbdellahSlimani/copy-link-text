@@ -2,13 +2,33 @@
   "manifest_version": 2,
   "name": "Copy Link Text",
   "version": "1.0",
-  "description": "Adds a context menu option to copy the text of a link.",
-  "permissions": ["contextMenus", "clipboardWrite"],
-  "background": {
-    "scripts": ["background.js"]
+  "description": "Easily copy the text of any link on the page by activating the extension.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "clipboardWrite"
+  ],
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "icons": {
-    "48": "icons/icon-48.png",
-    "128": "icons/icon-128.png"
-  }
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ]
 }
