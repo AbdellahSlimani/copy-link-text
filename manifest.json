@@ -4,9 +4,7 @@
   "version": "1.0",
   "description": "Easily copy the text of any link on the page by activating the extension.",
   "permissions": [
-    "activeTab",
-    "scripting",
-    "clipboardWrite"
+    "activeTab"
   ],
   "browser_action": {
     "default_popup": "popup.html",
