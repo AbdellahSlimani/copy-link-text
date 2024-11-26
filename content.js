@@ -72,11 +72,18 @@ function showCopyFeedback(linkText) {
   }, 2000);
 }
 
+// Listen for the message from background.js
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "showCopyFeedback") {
+    showCopyFeedback(message.linkText);
+  }
+});
+
 // Function to show the floating indicator in the bottom-left corner
 function showFloatingIcon() {
   if (!floatingIconElement) {
     floatingIconElement = document.createElement("img");
-    floatingIconElement.src = browser.runtime.getURL("icons/icon128.png");  // Use icon128.png
+    floatingIconElement.src = browser.runtime.getURL("icons/icon128.png"); // Use icon128.png
     floatingIconElement.style.position = "fixed";
     floatingIconElement.style.bottom = "20px";
     floatingIconElement.style.left = "20px";

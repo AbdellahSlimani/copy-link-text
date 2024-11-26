@@ -1,0 +1,93 @@
+/* General reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  width: 320px;
+  margin: 0 auto;
+}
+
+/* Light mode variables */
+:root {
+  --bg-color: #f4f4f9;
+  --text-color: #333;
+  --button-bg-color: #0078d7;
+  --button-hover-bg-color: #005fa3;
+}
+
+/* Dark mode variables */
+body.dark-mode {
+  --bg-color: #1e1e1e;
+  --text-color: #f4f4f9;
+  --button-bg-color: #4a90e2;
+  --button-hover-bg-color: #0078d7;
+}
+
+/* Title styling */
+h1 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Description styling */
+p {
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Button styling */
+button {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background-color: var(--button-bg-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--button-hover-bg-color);
+}
+
+/* Footer section */
+footer {
+  font-size: 12px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Icon preview styling */
+.icon-preview {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.icon-preview img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.icon-preview span {
+  font-size: 14px;
+}

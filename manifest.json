@@ -7,8 +7,15 @@
   "homepage_url": "https://github.com/AbdellahSlimani/copy-link-text",
   "permissions": [
     "activeTab",
-    "clipboardWrite"
+    "clipboardWrite",
+    "contextMenus"
   ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": false
+  },
   "browser_action": {
     "default_popup": "popup.html",
     "default_icon": {

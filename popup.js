@@ -4,6 +4,11 @@ let isCopyModeEnabled = false;
 // Get the button and status elements once
 const toggleButton = document.getElementById("toggleButton");
 const statusSpan = document.getElementById("status");
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+// Dark Mode Elements
+const darkModeToggle = document.getElementById("darkModeToggle");
+const body = document.body;
 
 // Function to update the UI based on the copy mode state
 const updateUI = () => {
@@ -30,5 +35,27 @@ const handleToggleClick = () => {
   });
 };
 
-// Add click event listener to the toggle button
+// Add event listeners
 toggleButton.addEventListener("click", handleToggleClick);
+
+// Initialize dark mode
+const initializeDarkMode = () => {
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  if (prefersDark) {
+    body.classList.add("dark-mode");
+  } else {
+    body.classList.remove("dark-mode");
+  }
+
+  // Listen for changes in system theme preference
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+    if (e.matches) {
+      body.classList.add("dark-mode");
+    } else {
+      body.classList.remove("dark-mode");
+    }
+  });
+};
+
+// Call initializeDarkMode after DOM is ready
+document.addEventListener("DOMContentLoaded", initializeDarkMode);
