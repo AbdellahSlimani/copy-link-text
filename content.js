@@ -52,11 +52,10 @@ function preventLinkAction(event) {
 }
 
 // Show a small feedback message to the user
+
 function showCopyFeedback(linkText) {
   const feedbackElement = document.createElement("div");
-  feedbackElement.textContent = `Copied: ${linkText}`;
-
-  // Style the feedback element
+  feedbackElement.textContent = `Copied: ${linkText}`; // Style the feedback element
   feedbackElement.style.position = "fixed";
   feedbackElement.style.bottom = "20px"; // Base bottom position
   feedbackElement.style.left = "50%";
@@ -66,31 +65,24 @@ function showCopyFeedback(linkText) {
   feedbackElement.style.padding = "10px";
   feedbackElement.style.borderRadius = "5px";
   feedbackElement.style.fontSize = "14px";
-  feedbackElement.style.zIndex = "9999";
+  feedbackElement.style.zIndex = "9999"; // Adjust vertical position based on the number of existing feedback elements
 
-  // Adjust vertical position based on the number of existing feedback elements
   const existingFeedbacks = document.querySelectorAll(".copy-feedback");
+
   const offset = existingFeedbacks.length * 45; // 45px space between messages
-  feedbackElement.style.bottom = `${20 + offset}px`;
+  feedbackElement.style.bottom = `${20 + offset}px`; // Add a class to identify feedback elements
+  feedbackElement.className = "copy-feedback"; // Append feedback to the document
+  document.body.appendChild(feedbackElement); // Remove feedback after 2 seconds
 
-  // Add a class to identify feedback elements
-  feedbackElement.className = "copy-feedback";
-
-  // Append feedback to the document
-  document.body.appendChild(feedbackElement);
-
-  // Remove feedback after 2 seconds
   setTimeout(() => {
     feedbackElement.remove();
   }, 2000);
 }
 
-browser.runtime.onMessage.addListener((message) => {
+// Listen for the message from background.js
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "showCopyFeedback") {
-    console.log("Feedback message received:", message.linkText);
-    // Optional: Show feedback to the user
-  } else if (message.action === "resetCopyModeState") {
-    console.log("Reset copy mode state received.");
+    showCopyFeedback(message.linkText);
   }
 });
 
@@ -103,10 +95,10 @@ function showFloatingIcon() {
     floatingIconElement.style.bottom = "20px";
     floatingIconElement.style.left = "20px";
     floatingIconElement.style.zIndex = "9999";
-    floatingIconElement.style.width = "50px"; 
-    floatingIconElement.style.height = "50px"; 
-    floatingIconElement.style.cursor = "pointer"; 
-    floatingIconElement.title = "Click to disable picker mode";
+    floatingIconElement.style.width = "50px"; // Adjust size if needed
+    floatingIconElement.style.height = "50px"; // Adjust size if needed
+    floatingIconElement.style.cursor = "pointer"; // Make it look clickable
+    floatingIconElement.title = "Click to disable picker mode"; // Add tooltip
     document.body.appendChild(floatingIconElement);
 
     // Add a click event listener to disable picker mode when clicked

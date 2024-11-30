@@ -39,7 +39,6 @@ body.dark-mode {
 h1 {
   font-size: 20px;
   font-weight: bold;
-  margin-bottom: 10px;
   text-align: center;
 }
 
@@ -76,19 +75,19 @@ footer {
 }
 
 /* Icon preview styling */
-.icon-preview {
+.header {
   display: flex;
   align-items: center;
   margin-bottom: 15px;
 }
 
-.icon-preview img {
+.header img {
   width: 40px;
   height: 40px;
   margin-right: 10px;
 }
 
-.icon-preview span {
+.header span {
   font-size: 14px;
 }
 
