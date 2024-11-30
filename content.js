@@ -51,12 +51,14 @@ function preventLinkAction(event) {
     });
 }
 
-// Optional: Show a small feedback message to the user
+// Show a small feedback message to the user
 function showCopyFeedback(linkText) {
   const feedbackElement = document.createElement("div");
   feedbackElement.textContent = `Copied: ${linkText}`;
+
+  // Style the feedback element
   feedbackElement.style.position = "fixed";
-  feedbackElement.style.bottom = "20px";
+  feedbackElement.style.bottom = "20px"; // Base bottom position
   feedbackElement.style.left = "50%";
   feedbackElement.style.transform = "translateX(-50%)";
   feedbackElement.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
@@ -64,6 +66,17 @@ function showCopyFeedback(linkText) {
   feedbackElement.style.padding = "10px";
   feedbackElement.style.borderRadius = "5px";
   feedbackElement.style.fontSize = "14px";
+  feedbackElement.style.zIndex = "9999";
+
+  // Adjust vertical position based on the number of existing feedback elements
+  const existingFeedbacks = document.querySelectorAll(".copy-feedback");
+  const offset = existingFeedbacks.length * 45; // 45px space between messages
+  feedbackElement.style.bottom = `${20 + offset}px`;
+
+  // Add a class to identify feedback elements
+  feedbackElement.className = "copy-feedback";
+
+  // Append feedback to the document
   document.body.appendChild(feedbackElement);
 
   // Remove feedback after 2 seconds
@@ -72,10 +85,12 @@ function showCopyFeedback(linkText) {
   }, 2000);
 }
 
-// Listen for the message from background.js
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+browser.runtime.onMessage.addListener((message) => {
   if (message.action === "showCopyFeedback") {
-    showCopyFeedback(message.linkText);
+    console.log("Feedback message received:", message.linkText);
+    // Optional: Show feedback to the user
+  } else if (message.action === "resetCopyModeState") {
+    console.log("Reset copy mode state received.");
   }
 });
 
@@ -88,10 +103,10 @@ function showFloatingIcon() {
     floatingIconElement.style.bottom = "20px";
     floatingIconElement.style.left = "20px";
     floatingIconElement.style.zIndex = "9999";
-    floatingIconElement.style.width = "50px"; // Adjust size if needed
-    floatingIconElement.style.height = "50px"; // Adjust size if needed
-    floatingIconElement.style.cursor = "pointer"; // Make it look clickable
-    floatingIconElement.title = "Click to disable picker mode"; // Add tooltip
+    floatingIconElement.style.width = "50px"; 
+    floatingIconElement.style.height = "50px"; 
+    floatingIconElement.style.cursor = "pointer"; 
+    floatingIconElement.title = "Click to disable picker mode";
     document.body.appendChild(floatingIconElement);
 
     // Add a click event listener to disable picker mode when clicked

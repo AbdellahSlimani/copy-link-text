@@ -1,42 +1,52 @@
-// Track whether the copy mode is enabled
-let isCopyModeEnabled = false;
-
-// Get the button and status elements once
+// Get elements
 const toggleButton = document.getElementById("toggleButton");
 const statusSpan = document.getElementById("status");
-const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+const body = document.body; // For dark mode
+const copyrightYear = document.getElementById("copyrightYear");
 
-// Dark Mode Elements
-const darkModeToggle = document.getElementById("darkModeToggle");
-const body = document.body;
-
-// Function to update the UI based on the copy mode state
-const updateUI = () => {
-  if (isCopyModeEnabled) {
-    statusSpan.textContent = "Enabled";
-    toggleButton.textContent = "Disable Copy Link Text";
-  } else {
-    statusSpan.textContent = "Disabled";
-    toggleButton.textContent = "Enable Copy Link Text";
-  }
+// Update UI based on the current state
+const updateUI = ({ isCopyModeEnabled }) => {
+  statusSpan.textContent = isCopyModeEnabled ? "Enabled" : "Disabled";
+  toggleButton.textContent = isCopyModeEnabled
+    ? "Disable Copy Link Text"
+    : "Enable Copy Link Text";
 };
 
-// Function to handle the toggle action
-const handleToggleClick = () => {
-  // Toggle the copy mode state
-  isCopyModeEnabled = !isCopyModeEnabled;
+// Toggle the copy mode and update the state
+const handleToggleClick = async () => {
+  const currentState = await getState();
+  const isCopyModeEnabled = !currentState.isCopyModeEnabled;
 
-  // Update the UI
-  updateUI();
+  // Update global state via background script
+  chrome.runtime.sendMessage(
+    {
+      action: "toggleCopyMode",
+      isCopyModeEnabled,
+    },
+    (response) => {
+      if (response.success) {
+        updateUI({ isCopyModeEnabled });
 
-  // Send a message to the active tab to toggle the picker mode
-  browser.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    browser.tabs.sendMessage(tabs[0].id, { action: "toggleCopyMode" });
+        // Send a message to the active tab for visual updates
+        browser.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          browser.tabs.sendMessage(tabs[0].id, {
+            action: "toggleCopyMode",
+            isCopyModeEnabled,
+          });
+        });
+      }
+    }
+  );
+};
+
+// Fetch the current state from the background script
+const getState = () => {
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage({ action: "getCopyModeState" }, (response) => {
+      resolve(response);
+    });
   });
 };
-
-// Add event listeners
-toggleButton.addEventListener("click", handleToggleClick);
 
 // Initialize dark mode
 const initializeDarkMode = () => {
@@ -48,14 +58,30 @@ const initializeDarkMode = () => {
   }
 
   // Listen for changes in system theme preference
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-    if (e.matches) {
-      body.classList.add("dark-mode");
-    } else {
-      body.classList.remove("dark-mode");
-    }
-  });
+  window
+    .matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", (e) => {
+      if (e.matches) {
+        body.classList.add("dark-mode");
+      } else {
+        body.classList.remove("dark-mode");
+      }
+    });
 };
 
-// Call initializeDarkMode after DOM is ready
-document.addEventListener("DOMContentLoaded", initializeDarkMode);
+// Initialize the popup
+document.addEventListener("DOMContentLoaded", async () => {
+  const currentYear = new Date().getFullYear();
+
+  // Update the copyright year
+  copyrightYear.textContent = currentYear;
+  // Fetch and update the UI with the current state
+  const state = await getState();
+  updateUI(state);
+
+  // Add event listeners
+  toggleButton.addEventListener("click", handleToggleClick);
+
+  // Initialize dark mode
+  initializeDarkMode();
+});

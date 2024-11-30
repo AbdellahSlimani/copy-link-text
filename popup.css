@@ -91,3 +91,9 @@ footer {
 .icon-preview span {
   font-size: 14px;
 }
+
+a {
+  color: #f7ab0a;
+  text-decoration: none;
+  font-weight: bold;
+}
