@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Copy Link Text",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Easily copy the text of any link on the page by activating the extension.",
   "author": "Sytelix",
   "homepage_url": "https://github.com/AbdellahSlimani/copy-link-text",

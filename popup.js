@@ -2,7 +2,6 @@
 const copyrightYear = document.getElementById("copyrightYear");
 const darkModeToggle = document.getElementById("darkModeToggle");
 const body = document.body;
-const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
 // Function to handle the toggle action
 const handleToggleClick = () => {
@@ -13,26 +12,6 @@ const handleToggleClick = () => {
   });
 };
 
-// Initialize dark mode
-const initializeDarkMode = () => {
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  if (prefersDark) {
-    body.classList.add("dark-mode");
-  } else {
-    body.classList.remove("dark-mode");
-  }
-
-  // Listen for changes in system theme preference
-  window
-    .matchMedia("(prefers-color-scheme: dark)")
-    .addEventListener("change", (e) => {
-      if (e.matches) {
-        body.classList.add("dark-mode");
-      } else {
-        body.classList.remove("dark-mode");
-      }
-    });
-};
 
 // Initialize the popup
 document.addEventListener("DOMContentLoaded", async () => {
@@ -45,5 +24,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   toggleButton.addEventListener("click", handleToggleClick);
 
   // Initialize dark mode
-  initializeDarkMode();
+  // initializeDarkMode();
 });

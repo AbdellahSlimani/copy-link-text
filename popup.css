@@ -28,11 +28,13 @@ body {
 }
 
 /* Dark mode variables */
-body.dark-mode {
-  --bg-color: #1e1e1e;
-  --text-color: #f4f4f9;
-  --button-bg-color: #4a90e2;
-  --button-hover-bg-color: #0078d7;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #1e1e1e;
+    --text-color: #f4f4f9;
+    --button-bg-color: #4a90e2;
+    --button-hover-bg-color: #0078d7;
+  }
 }
 
 /* Title styling */
@@ -95,4 +97,45 @@ a {
   color: #f7ab0a;
   text-decoration: none;
   font-weight: bold;
+}
+
+/* Feature Info Styling */
+.feature-info {
+  padding: 10px;
+  background-color: var(--bg-color); /* Adjusts to the theme */
+  border: 1px solid var(--text-color); /* Matches the current text color */
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for both themes */
+  text-align: center;
+}
+
+.feature-info p {
+  margin-bottom: 0;
+}
+
+/* Highlighted Text Styling */
+.highlight {
+  font-weight: bold;
+  color: var(--button-bg-color); /* Matches button color for consistency */
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Keyboard Key Styling */
+kbd {
+  background-color: var(--bg-color); /* Matches theme background */
+  color: var(--text-color); /* Matches theme text color */
+  border: 1px solid var(--text-color); /* Consistent with current theme */
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 0.9em;
+  font-family: monospace;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2); /* Works well for light and dark themes */
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--text-color);
+  margin-block: 15px;
+  width: 100%;
 }

@@ -1,5 +1,19 @@
 let isPickerModeOn = false;
 let floatingIconElement = null;
+let isAltCActive = false;
+
+// Listen for keydown and keyup to detect Alt + C
+document.addEventListener("keydown", (event) => {
+  if (event.altKey && event.code === "KeyC") {
+    isAltCActive = true;
+  }
+});
+
+document.addEventListener("keyup", (event) => {
+  if (event.code === "KeyC" || event.code === "AltLeft" || event.code === "AltRight") {
+    isAltCActive = false;
+  }
+});
 
 // Listen for messages from the background or popup to toggle picker mode
 browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -130,3 +144,29 @@ function disablePickerMode() {
   // Remove the floating indicator
   removeFloatingIcon();
 }
+
+// Listen for click events on links
+document.addEventListener("click", (event) => {
+  if (isAltCActive) {
+    // Check if the clicked element or its parent is an <a> tag
+    let targetLink = event.target.closest("a");
+    if (targetLink) {
+      event.preventDefault(); // Stop default link action
+      event.stopImmediatePropagation();
+
+      // Copy the link text
+      const linkText = targetLink.innerText.trim();
+      if (linkText) {
+        navigator.clipboard
+          .writeText(linkText)
+          .then(() => {
+            console.log(`Link text copied to clipboard: "${linkText}"`);
+            showCopyFeedback(linkText); // Provide feedback to the user
+          })
+          .catch((err) => {
+            console.error("Failed to copy link text:", err);
+          });
+      }
+    }
+  }
+});
