@@ -43,7 +43,22 @@ api.runtime.onStartup?.addListener?.(() => {
   createMenus();
 });
 
-// Context menu actions delegate copy to the content script (clipboard is page-bound)
+// One-click toggle via toolbar icon (MV2: browserAction; MV3: action)
+if (api.browserAction?.onClicked) {
+  api.browserAction.onClicked.addListener((tab) => {
+    if (tab?.id != null) {
+      api.tabs.sendMessage(tab.id, { type: "TOGGLE_COPY_MODE" });
+    }
+  });
+} else if (api.action?.onClicked) {
+  api.action.onClicked.addListener((tab) => {
+    if (tab?.id != null) {
+      api.tabs.sendMessage(tab.id, { type: "TOGGLE_COPY_MODE" });
+    }
+  });
+}
+
+// Context menu actions delegate copy/toggle to content script
 api.contextMenus.onClicked.addListener((info, tab) => {
   if (!tab || typeof tab.id !== "number") return;
   if (info.menuItemId === "copy-link-text") {
