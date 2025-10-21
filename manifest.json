@@ -47,10 +47,5 @@
       },
       "description": "Toggle Copy Mode"
     }
-  },
-  "applications": {
-    "gecko": {
-      "id": "copy-link-text@sytelix.tech"
-    }
   }
 }
