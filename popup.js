@@ -1,28 +1,58 @@
-// Get elements
-const copyrightYear = document.getElementById("copyrightYear");
-const darkModeToggle = document.getElementById("darkModeToggle");
-const body = document.body;
+"use strict";
 
-// Function to handle the toggle action
-const handleToggleClick = () => {
+const api = typeof browser !== "undefined" ? browser : chrome;
 
-  // Send a message to the active tab to toggle the picker mode
-  browser.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    browser.tabs.sendMessage(tabs[0].id, { action: "toggleCopyMode" });
+// Elements
+const toggleButton = document.getElementById("toggleButton");
+const statusEl = document.getElementById("status");
+const copyright =
+  document.getElementById("copyrightYear");
+
+// Helpers
+function setStatus(text) {
+  if (statusEl) statusEl.textContent = text || "";
+}
+
+function updateButtonLabel(isOn) {
+  toggleButton.textContent = isOn ? "Disable Copy Mode" : "Enable Copy Mode";
+  setStatus(isOn ? "Copy Mode is ON for this tab." : "Copy Mode is OFF.");
+}
+
+function withActiveTab(fn) {
+  api.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const tab = tabs?.[0];
+    if (tab?.id != null) {
+      fn(tab.id);
+    } else {
+      setStatus("Not available on this page.");
+    }
   });
-};
+}
 
+// Init
+document.addEventListener("DOMContentLoaded", () => {
+  const year = new Date().getFullYear();
+  if (copyright) copyright.textContent = String(year);
 
-// Initialize the popup
-document.addEventListener("DOMContentLoaded", async () => {
-  const currentYear = new Date().getFullYear();
+  // Query current state from content script
+  withActiveTab((tabId) => {
+    api.tabs.sendMessage(tabId, { type: "GET_STATE" }, (resp) => {
+      if (api.runtime.lastError) {
+        setStatus("This page does not allow extensions.");
+        updateButtonLabel(false);
+        return;
+      }
+      const isOn = Boolean(resp?.isCopyModeOn);
+      updateButtonLabel(isOn);
+    });
+  });
 
-  // Update the copyright year
-  copyrightYear.textContent = currentYear;
-
-  // Add event listeners
-  toggleButton.addEventListener("click", handleToggleClick);
-
-  // Initialize dark mode
-  // initializeDarkMode();
+  toggleButton.addEventListener("click", () => {
+    withActiveTab((tabId) => {
+      api.tabs.sendMessage(tabId, { type: "TOGGLE_COPY_MODE" }, (resp) => {
+        const isOn = Boolean(resp?.isCopyModeOn);
+        updateButtonLabel(isOn);
+      });
+    });
+  });
 });

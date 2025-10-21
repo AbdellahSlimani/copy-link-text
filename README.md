@@ -1,46 +1,42 @@
-# Copy Link Text for Firefox
+# Copy Link Text
 
-**Copy Link Text** is a Firefox extension designed to solve a common problem: easily copying the text of hyperlinks on a webpage. While many browsers offer this functionality on desktop, Firefox lacks it, particularly on mobile devices. This extension provides a fast, simple, and user-friendly solution.
+Copy the visible text of hyperlinks with a tap/click. Cross‑browser, lightweight, and privacy‑friendly.
 
 ## Key Features
 
-- **Mobile-First Design:** Works seamlessly on both desktop and mobile browsers, offering essential functionality for copying link text on mobile.
-- **No Right-Click Required:** Uses a copy mode activated by clicking the extension icon, which works perfectly on mobile and desktop.
-- **No Ads, No Data Collection:** Your privacy is a top priority. No tracking or ads, ensuring a secure and smooth experience.
-- **Open-Source:** Fully open-source for inspection and contribution.
-- **Simple and Intuitive:** Activate copy mode with a click and copy link text with a tap. Deactivate by clicking the icon again.
-
-## Why It's Useful
-
-- **Enhanced Mobile Experience:** Firefox on mobile lacks native support for copying link text, but Copy Link Text solves this issue.
-- **Faster Workflow:** Quickly copy multiple link texts without extra steps.
-- **Privacy-Focused:** No tracking, no ads—just the functionality you need.
+- Mobile-first: Tap links in Copy Mode to copy their text (works great on Firefox Mobile and other browsers).
+- Alt+Click on desktop: Quickly copy link text without enabling Copy Mode.
+- Context menu: Right-click a link and choose “Copy link text”.
+- No tracking, no ads. Open source.
 
 ## How It Works
 
-1. **Activate Copy Mode:** Click the extension icon to enable copy mode.
-2. **Copy Link Text:** Tap any hyperlink on the page to copy the text to your clipboard.
-3. **Deactivate Copy Mode:** Click the extension icon again or tap the bottom-left corner icon to deactivate.
+1. Enable Copy Mode from the popup (or via the context menu on Desktop).
+2. Click/tap any link to copy its visible text.
+3. Disable Copy Mode using the floating ✕ button or the popup.
+4. Desktop tip: Hold Alt and click a link to copy instantly with no mode switching.
 
-This approach ensures a flawless experience on Firefox mobile, where modifying the context menu isn't possible.
 
-## Installation
+## Permissions
 
-1. Download the **Copy Link Text** extension from the [Firefox Add-ons Store](https://addons.mozilla.org/en-US/firefox/addon/copy-link-text-sytelix/).
-2. Install and enable the extension in Firefox.
-3. Once installed, click the extension icon to start copying link text!
+- contextMenus: Provide the “Copy link text” context menu.
+- clipboardWrite: Allow copying to the clipboard.
+- activeTab / scripting: Communicate with the active tab.
+- storage: Reserved for future settings (e.g., defaults).
 
-## Privacy and Security
+## Privacy
 
-- **No data collection:** We do not collect or transmit any personal information.
-- **No ads:** Enjoy an uninterrupted browsing experience.
-- **Completely open-source:** Inspect the source code to ensure your data is not being tracked.
+- No data collection, no analytics.
 
-## Contributing
+## Development
 
-This project is open-source, and contributions are welcome! If you have suggestions, bug fixes, or new features, feel free to fork the repository, submit a pull request, or open an issue.
+- Load the extension as an unpacked extension (Developer Mode) in your browser.
+- Files:
+  - `manifest.json`: MV2 manifest (cross-browser).
+  - `background.js`: Service worker for menus and commands.
+  - `content.js`: Page logic (Copy Mode, Alt+Click, toasts).
+  - `popup.html`, `popup.js`, `popup.css`: Action popup.
 
 ## License
 
-This extension is released under the [LICENSE_NAME] License.
-
+MIT. Add a LICENSE file with the MIT text.

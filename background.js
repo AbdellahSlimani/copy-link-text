@@ -1,33 +1,66 @@
-// Create the context menu
-browser.contextMenus.create({
-  id: "copy-link-text",
-  title: "Copy Link Text",
-  contexts: ["link"]
+"use strict";
+
+// Cross-browser API
+const api = typeof browser !== "undefined" ? browser : chrome;
+
+function createMenus() {
+  // Remove and re-create to avoid duplicates across restarts
+  try {
+    api.contextMenus.removeAll(() => {
+      api.contextMenus.create({
+        id: "copy-link-text",
+        title: "Copy link text",
+        contexts: ["link"]
+      });
+      api.contextMenus.create({
+        id: "toggle-copy-mode",
+        title: "Toggle Copy Mode",
+        contexts: ["all"]
+      });
+    });
+  } catch {
+    // Fallback for promise-based removeAll (Firefox)
+    api.contextMenus.removeAll?.().finally?.(() => {
+      api.contextMenus.create({
+        id: "copy-link-text",
+        title: "Copy link text",
+        contexts: ["link"]
+      });
+      api.contextMenus.create({
+        id: "toggle-copy-mode",
+        title: "Toggle Copy Mode",
+        contexts: ["all"]
+      });
+    });
+  }
+}
+
+api.runtime.onInstalled.addListener(() => {
+  createMenus();
 });
 
-// Handle the click event
-browser.contextMenus.onClicked.addListener((info, tab) => {
+api.runtime.onStartup?.addListener?.(() => {
+  createMenus();
+});
+
+// Context menu actions delegate copy to the content script (clipboard is page-bound)
+api.contextMenus.onClicked.addListener((info, tab) => {
+  if (!tab || typeof tab.id !== "number") return;
   if (info.menuItemId === "copy-link-text") {
-    // Get the link text
-    const linkText = info.linkText || "";
-
-    // Copy to clipboard
-    if (linkText) {
-      navigator.clipboard.writeText(linkText)
-        .then(() => {
-          console.log("Link text copied to clipboard");
-
-          // Send a message to content.js to show feedback
-          browser.tabs.sendMessage(tab.id, {
-            action: "showCopyFeedback",  // Action type
-            linkText: linkText          // Text to display in the feedback
-          });
-        })
-        .catch(err => {
-          console.error("Failed to copy link text: ", err);
-        });
-    }
+    api.tabs.sendMessage(tab.id, { type: "CONTEXT_MENU_COPY" });
+  } else if (info.menuItemId === "toggle-copy-mode") {
+    api.tabs.sendMessage(tab.id, { type: "TOGGLE_COPY_MODE" });
   }
 });
 
-
+// Optional command to toggle copy mode with a hotkey
+api.commands?.onCommand?.addListener?.((command) => {
+  if (command === "toggle-copy-mode") {
+    api.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tab = tabs?.[0];
+      if (tab?.id != null) {
+        api.tabs.sendMessage(tab.id, { type: "TOGGLE_COPY_MODE" });
+      }
+    });
+  }
+});
