@@ -29,6 +29,13 @@ function withActiveTab(fn) {
   });
 }
 
+// Close the popup after a short delay to allow messages to flush
+function closePopupSoon(delayMs = 1) {
+  setTimeout(() => {
+    try { window.close(); } catch {}
+  }, delayMs);
+}
+
 // Init
 document.addEventListener("DOMContentLoaded", () => {
   const year = new Date().getFullYear();
@@ -50,8 +57,15 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleButton.addEventListener("click", () => {
     withActiveTab((tabId) => {
       api.tabs.sendMessage(tabId, { type: "TOGGLE_COPY_MODE" }, (resp) => {
+        if (api.runtime.lastError) {
+          // Even if we can't reach the page (e.g., restricted), close the popup to reduce steps
+          setStatus("Not available on this page.");
+          closePopupSoon(100);
+          return;
+        }
         const isOn = Boolean(resp?.isCopyModeOn);
         updateButtonLabel(isOn);
+        closePopupSoon(75);
       });
     });
   });
