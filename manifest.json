@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Copy Link Text",
   "description": "Copy the visible text of hyperlinks with a tap/click across all major browsers.",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "browser_action": {
     "default_title": "Copy Link Text",
     "default_popup": "popup.html",

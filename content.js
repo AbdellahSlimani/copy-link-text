@@ -62,10 +62,10 @@ function fallbackCopy(text) {
   return Promise.resolve(ok);
 }
 
-// Toast feedback
-function showCopyFeedback(linkText) {
+// Generic toast (no "Copied:" prefix)
+function showToast(message) {
   const feedbackElement = document.createElement("div");
-  feedbackElement.textContent = `Copied: ${linkText}`;
+  feedbackElement.textContent = message;
   feedbackElement.style.position = "fixed";
   feedbackElement.style.left = "50%";
   feedbackElement.style.transform = "translateX(-50%)";
@@ -87,6 +87,12 @@ function showCopyFeedback(linkText) {
   setTimeout(() => feedbackElement.remove(), 1600);
 }
 
+// Copy toast (WITH "Copied:" prefix)
+function showCopyToast(text) {
+  if (!text) return;
+  showToast(`Copied: ${text}`);
+}
+
 // Copy handler (used by both Copy Mode and Alt+Click)
 function handleCopyFromLink(a, event) {
   const linkText = getLinkText(a);
@@ -94,17 +100,25 @@ function handleCopyFromLink(a, event) {
   event?.preventDefault?.();
   event?.stopImmediatePropagation?.();
   copyText(linkText)
-    .then(() => showCopyFeedback(linkText))
+    .then(() => showCopyToast(linkText)) // keep "Copied:" prefix here
     .catch(() => {});
 }
 
 // Copy Mode toggle
 function setCopyMode(on) {
-  isCopyModeOn = !!on;
+  const next = !!on;
+  const changed = next !== isCopyModeOn;
+  isCopyModeOn = next;
+
   if (isCopyModeOn) {
     showFloatingIcon();
   } else {
     removeFloatingIcon();
+  }
+
+  // Toggle toasts should NOT include the "Copied:" prefix
+  if (changed) {
+    showToast(isCopyModeOn ? "Copy Mode enabled" : "Copy Mode disabled");
   }
 }
 
@@ -163,7 +177,6 @@ function showFloatingIcon() {
   btn.style.padding = "0";
   btn.style.cursor = "pointer";
   btn.style.zIndex = "2147483647";
-  btn.style.position = "fixed";
   btn.style.display = "inline-block";
   btn.style.overflow = "hidden";
   btn.style.backgroundColor = "transparent";
@@ -186,16 +199,21 @@ function showFloatingIcon() {
   x.style.justifyContent = "center";
   x.style.fontSize = "20px";
   x.style.fontWeight = "700";
-  x.style.color = "rgba(0,0,0,0.72)"; // transparent black
-  // Subtle outline so it reads on both light/dark icon areas
-  x.style.textShadow =
-    "0 0 2px rgba(255,255,255,0.9), 0 1px 2px rgba(0,0,0,0.35)";
+  x.style.color = "rgba(0,0,0,0.72)";
+  x.style.textShadow = "0 0 2px rgba(255,255,255,0.9), 0 1px 2px rgba(0,0,0,0.35)";
 
   btn.appendChild(x);
 
+  // Click/keyboard to disable — setCopyMode will show a non-"Copied:" toast
+  btn.tabIndex = 0;
   btn.addEventListener("click", () => {
     setCopyMode(false);
-    showCopyFeedback("Copy Mode disabled");
+  });
+  btn.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setCopyMode(false);
+    }
   });
 
   document.body.appendChild(btn);
@@ -225,10 +243,11 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const now = Date.now();
       if (now - lastContextData.ts < 5000 && lastContextData.text) {
         copyText(lastContextData.text)
-          .then(() => showCopyFeedback(lastContextData.text))
+          .then(() => showCopyToast(lastContextData.text)) // keep "Copied:" prefix here
           .catch(() => {});
       } else {
-        showCopyFeedback("No link text detected");
+        // Non-copy message: no "Copied:" prefix
+        showToast("No link text detected");
       }
       sendResponse?.({ ok: true });
       return;
